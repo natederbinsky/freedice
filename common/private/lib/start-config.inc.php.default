@@ -1,0 +1,9 @@
+<?php
+
+	// must start with protocol (e.g. http://) and end in '/'
+	$sys_config['SYSTEM_URL'] = 'http://localhost/dice/';
+	
+	// boolean, true to allow submission of user registration
+	$sys_config['ENABLE_REGISTRATION'] = false;
+
+?>
