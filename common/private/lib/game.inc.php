@@ -172,7 +172,8 @@
 			}
 		}
 			
-		$pass = -1;
+		$pass1 = -1;
+		$pass2 = -1;
 		$push = false;
 		$bidder = 0;		
 		$my_pass = false;
@@ -185,9 +186,12 @@
 		{
 			// find last bid
 			while ( $logs[ $bidder ]['action_id'] != $actions['bid'] )
-			{				
-				if ( ( $pass == -1 ) && ( $logs[ $bidder ]['action_id'] == $actions['pass'] ) )
-					$pass = $reverse_players[ $logs[ $bidder ]['player_id'] ];
+			{
+				if ( ( $pass2 == -1 ) && ( $pass1 != -1 ) && ( $logs[ $bidder ]['action_id'] == $actions['pass'] ) )
+					$pass2 = $reverse_players[ $logs[ $bidder ]['player_id'] ];
+				
+				if ( ( $pass1 == -1 ) && ( $logs[ $bidder ]['action_id'] == $actions['pass'] ) )
+					$pass1 = $reverse_players[ $logs[ $bidder ]['player_id'] ];
 								
 				if ( $logs[ $bidder ]['action_id'] == $actions['push'] )
 					$push = true;
@@ -281,10 +285,12 @@
 					{
 						$challenge = array();
 						
-						if ( $players[ $bidder ]['player_id'] != $return_val['me']['player_id'] )
+						if ( ( $pass2 == -1 ) && ( $players[ $bidder ]['player_id'] != $return_val['me']['player_id'] ) )
 							$challenge[] = $bidder;
-						if ( ( $pass != -1 ) && ( $players[ $pass ]['player_id'] != $return_val['me']['player_id'] ) )
-							$challenge[] = $pass;
+						if ( ( $pass1 != -1 ) && ( $players[ $pass1 ]['player_id'] != $return_val['me']['player_id'] ) )
+							$challenge[] = $pass1;
+						if ( ( $pass2 != -1 ) && ( $players[ $pass2 ]['player_id'] != $return_val['me']['player_id'] ) )
+							$challenge[] = $pass2;
 						if ( !empty( $challenge ) )
 							$return_val['avail_actions']['challenge'] = array_unique( $challenge );
 							

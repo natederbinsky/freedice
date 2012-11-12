@@ -304,8 +304,23 @@
 						}
 						else
 						{
-							// challenge bid or pass
+							$pass = false;
+							$pass_target = -1;
+							
 							if ( ( $logs[0]['action_id'] == $actions['pass'] ) && ( $logs[0]['player_id'] == $target ) )
+							{
+								$pass = true;
+								$pass_target = 0;
+							}
+							
+							if ( ( $pass == false ) && ( count( $logs ) > 1 ) && ( $logs[1]['action_id'] == $actions['pass'] ) && ( $logs[1]['player_id'] == $target ) )
+							{
+								$pass = true;
+								$pass_target = 1;
+							}
+							
+							// challenge bid or pass
+							if ( $pass )
 							{																
 								$extra = array( 'action: pass' );
 								foreach ( $players as $player )
@@ -325,14 +340,14 @@
 								foreach ( $players as $key => $val )
 									$reverse_players[ $val['player_id'] ] = $key;
 								
-								$target_face = $players[ $reverse_players[ $logs[0]['player_id'] ] ]['cup'][0];
+								$target_face = $players[ $reverse_players[ $logs[ $pass_target ]['player_id'] ] ]['cup'][0];
 								$bad_face = false;
 								
-								foreach ( $players[ $reverse_players[ $logs[0]['player_id'] ] ]['cup'] as $val )
+								foreach ( $players[ $reverse_players[ $logs[ $pass_target ]['player_id'] ] ]['cup'] as $val )
 									if ( $val != $target_face )
 										$bad_face = true;
 								
-								foreach ( $players[ $reverse_players[ $logs[0]['player_id'] ] ]['shown'] as $val )
+								foreach ( $players[ $reverse_players[ $logs[ $pass_target ]['player_id'] ] ]['shown'] as $val )
 									if ( $val != $target_face )
 										$bad_face = true;
 								
