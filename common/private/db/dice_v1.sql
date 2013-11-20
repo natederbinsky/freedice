@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `actions` (
   `action_name` varchar(250) NOT NULL DEFAULT '',
   PRIMARY KEY (`action_id`),
   KEY `action_name` (`action_name`)
-) ENGINE=MEMORY  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
 
 --
 -- Dumping data for table `actions`
@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS `action_logs` (
   PRIMARY KEY (`log_id`),
   KEY `log_id` (`log_id`,`round_id`),
   KEY `round_id` (`round_id`,`result`)
-) ENGINE=MEMORY DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 --
 -- Dumping data for table `action_logs`
@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS `colors` (
   `color_name` varchar(50) NOT NULL DEFAULT '',
   PRIMARY KEY (`color_id`),
   KEY `color_name` (`color_name`)
-) ENGINE=MEMORY  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
 
 --
 -- Dumping data for table `colors`
@@ -110,7 +110,7 @@ CREATE TABLE IF NOT EXISTS `games` (
   `game_admin` int(11) NOT NULL,
   `game_emails` varchar(1) NOT NULL DEFAULT 'N',
   PRIMARY KEY (`game_id`)
-) ENGINE=MEMORY DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 --
 -- Dumping data for table `games`
@@ -133,7 +133,7 @@ CREATE TABLE IF NOT EXISTS `game_players` (
   `exact_used` varchar(1) NOT NULL DEFAULT 'F',
   PRIMARY KEY (`game_id`,`player_id`),
   KEY `game_id` (`game_id`,`play_order`)
-) ENGINE=MEMORY DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `game_players`
@@ -151,7 +151,7 @@ CREATE TABLE IF NOT EXISTS `game_statuses` (
   `game_status_name` varchar(250) NOT NULL DEFAULT '',
   PRIMARY KEY (`game_status_id`),
   KEY `game_status_name` (`game_status_name`)
-) ENGINE=MEMORY  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=4 ;
 
 --
 -- Dumping data for table `game_statuses`
@@ -175,7 +175,7 @@ CREATE TABLE IF NOT EXISTS `msgs` (
   `msg` varchar(250) NOT NULL,
   PRIMARY KEY (`msg_id`),
   KEY `msg_id` (`msg_id`,`game_id`)
-) ENGINE=MEMORY DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 --
 -- Dumping data for table `msgs`
@@ -197,7 +197,7 @@ CREATE TABLE IF NOT EXISTS `players` (
   `track_stats` varchar(1) NOT NULL DEFAULT 'Y',
   PRIMARY KEY (`player_id`),
   KEY `player_name` (`player_name`,`player_email`)
-) ENGINE=MEMORY  DEFAULT CHARSET=latin1 AUTO_INCREMENT=23 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=23 ;
 
 --
 -- Dumping data for table `players`
@@ -216,7 +216,7 @@ CREATE TABLE IF NOT EXISTS `rounds` (
   `special_rules` varchar(10) NOT NULL DEFAULT 'N',
   PRIMARY KEY (`round_id`),
   KEY `round_id` (`round_id`,`game_id`)
-) ENGINE=MEMORY DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
 --
 -- Dumping data for table `rounds`
