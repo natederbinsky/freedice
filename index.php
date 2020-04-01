@@ -263,7 +263,7 @@
 			echo '</div>';
 			echo '</div>';
 			
-			$leader_sql = 'SELECT p.player_name, p.player_id AS p_id, c.* FROM players p LEFT JOIN (SELECT a.player_id, a.total, b.success, (b.success/a.total) AS rate FROM (SELECT al.player_id, COUNT(*) AS total FROM action_logs al INNER JOIN actions a ON al.action_id=a.action_id WHERE a.action_name=\'challenge\' GROUP BY al.player_id) a LEFT JOIN (SELECT al.player_id, COUNT(*) AS success FROM action_logs al INNER JOIN actions a ON al.action_id=a.action_id WHERE a.action_name=\'challenge\' AND al.result=\'1\' GROUP BY al.player_id) b ON a.player_id=b.player_id) c ON p.player_id=c.player_id WHERE p.track_stats=\'Y\' AND total>0 ORDER BY c.rate DESC, c.total DESC, c.player_id ASC';
+			$leader_sql = 'SELECT p.player_name, p.player_id AS p_id, c.* FROM players p LEFT JOIN (SELECT a.player_id, a.total, b.success, (b.success/a.total) AS rate FROM (SELECT al.player_id, COUNT(*) AS total FROM action_logs al INNER JOIN actions a ON al.action_id=a.action_id WHERE a.action_name=\'challenge\' GROUP BY al.player_id) a LEFT JOIN (SELECT al.player_id, COUNT(*) AS success FROM action_logs al INNER JOIN actions a ON al.action_id=a.action_id WHERE a.action_name=\'challenge\' AND al.result=\'1\' GROUP BY al.player_id) b ON a.player_id=b.player_id) c ON p.player_id=c.player_id WHERE p.track_stats=\'Y\' AND total IS NOT NULL ORDER BY c.rate DESC, c.total DESC, c.player_id ASC';
 			$leader_result = @mysql_query( $leader_sql, $db );
 			
 			echo '<div id="challenge">';
@@ -301,7 +301,7 @@
 			echo '</div>';
 			
 			
-			$leader_sql = 'SELECT *, (success/total) AS rate FROM (SELECT player_id AS p_id, player_name, (SELECT COUNT(*) AS total FROM action_logs WHERE action_id=2 AND value=p_id) AS total, (SELECT COUNT(*) FROM action_logs WHERE action_id=2 AND result=0 AND value=p_id) AS success FROM players WHERE track_stats=\'Y\') stuff WHERE total>0 ORDER BY rate DESC, total DESC';
+			$leader_sql = 'SELECT *, (success/total) AS rate FROM (SELECT player_id AS p_id, player_name, (SELECT COUNT(*) AS total FROM action_logs WHERE action_id=2 AND value=p_id) AS total, (SELECT COUNT(*) FROM action_logs WHERE action_id=2 AND result=0 AND value=p_id) AS success FROM players WHERE track_stats=\'Y\') stuff WHERE total IS NOT NULL ORDER BY rate DESC, total DESC';
 			$leader_result = @mysql_query( $leader_sql, $db );
 			
 			echo '<div id="survival">';
@@ -338,7 +338,7 @@
 			echo '</div>';
 			echo '</div>';
 			
-			$leader_sql = 'SELECT p.player_name, p.player_id AS p_id, c.*, (SELECT COUNT(*) AS my_games FROM game_players ugp, games ug WHERE ugp.player_id=p.player_id AND ugp.game_id=ug.game_id) AS my_games FROM players p LEFT JOIN (SELECT a.player_id, a.total, b.success, (b.success/a.total) AS rate FROM (SELECT al.player_id, COUNT(*) AS total FROM action_logs al INNER JOIN actions a ON al.action_id=a.action_id WHERE a.action_name=\'exact\' GROUP BY al.player_id) a LEFT JOIN (SELECT al.player_id, COUNT(*) AS success FROM action_logs al INNER JOIN actions a ON al.action_id=a.action_id WHERE a.action_name=\'exact\' AND al.result=\'1\' GROUP BY al.player_id) b ON a.player_id=b.player_id) c ON p.player_id=c.player_id WHERE p.track_stats=\'Y\' AND c.total>0 ORDER BY c.rate DESC, c.total DESC, c.player_id ASC';
+			$leader_sql = 'SELECT p.player_name, p.player_id AS p_id, c.*, (SELECT COUNT(*) AS my_games FROM game_players ugp, games ug WHERE ugp.player_id=p.player_id AND ugp.game_id=ug.game_id) AS my_games FROM players p LEFT JOIN (SELECT a.player_id, a.total, b.success, (b.success/a.total) AS rate FROM (SELECT al.player_id, COUNT(*) AS total FROM action_logs al INNER JOIN actions a ON al.action_id=a.action_id WHERE a.action_name=\'exact\' GROUP BY al.player_id) a LEFT JOIN (SELECT al.player_id, COUNT(*) AS success FROM action_logs al INNER JOIN actions a ON al.action_id=a.action_id WHERE a.action_name=\'exact\' AND al.result=\'1\' GROUP BY al.player_id) b ON a.player_id=b.player_id) c ON p.player_id=c.player_id WHERE p.track_stats=\'Y\' AND c.total IS NOT NULL ORDER BY c.rate DESC, c.total DESC, c.player_id ASC';
 			$leader_result = @mysql_query( $leader_sql, $db );
 			
 			echo '<div id="exact">';
