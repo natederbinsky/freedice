@@ -18,7 +18,7 @@
 			
 			// get games
 			$game_sql = 'SELECT g.game_id, g.game_name, (CHAR_LENGTH(g.game_pw) > 0) AS game_protected, g.game_status, g.dice_start, p.player_name, g.game_admin FROM games g INNER JOIN players p ON g.game_admin=p.player_id ORDER BY g.game_status ASC, g.game_id ASC';
-			$game_result = @mysql_query( $game_sql, $db );
+			$game_result = @mysqli_query( $db, $game_sql );
 			$old_status = -1;
 			$old_game = -1;
 			
@@ -41,11 +41,11 @@
 				echo '<div id="details">';
 				
 				$leader_sql = 'SELECT game_name, player_id, player_name, SUM(won) AS won FROM (SELECT gp.player_id, p.player_name, g.game_id, g.game_name, CHAR_LENGTH(gp.cup)>0 AS won FROM game_players gp, games g, players p, game_statuses gs WHERE gp.game_id=g.game_id AND gp.player_id=p.player_id AND g.game_status=gs.game_status_id AND game_status_name=\'Finished\') x GROUP BY game_name, player_id ORDER BY game_name ASC, won DESC, player_name ASC';
-				$leader_result = @mysql_query( $leader_sql, $db );
+				$leader_result = @mysqli_query( $db, $leader_sql );
 				
 				$old_game = null;
 				
-				while ( $leader_row = mysql_fetch_assoc( $leader_result ) )
+				while ( $leader_row = mysqli_fetch_assoc( $leader_result ) )
 				{
 					if ( $leader_row['game_name'] != $old_game )
 					{
@@ -97,10 +97,10 @@
 			if ( $game_result )
 			{
 				$player_sql = 'SELECT gp.game_id, p.player_id, p.player_name, p.player_email, (CHAR_LENGTH(gp.cup)+CHAR_LENGTH(gp.shown)) AS num_dice, gp.dice_color FROM (players p INNER JOIN game_players gp ON p.player_id=gp.player_id) INNER JOIN games g ON gp.game_id=g.game_id ORDER BY g.game_status ASC, gp.game_id ASC, gp.play_order ASC';
-				$player_result = @mysql_query( $player_sql, $db );
-				$player_row = mysql_fetch_assoc( $player_result );
+				$player_result = @mysqli_query( $db, $player_sql );
+				$player_row = mysqli_fetch_assoc( $player_result );
 				
-				while ( $game_row = mysql_fetch_assoc( $game_result ) )
+				while ( $game_row = mysqli_fetch_assoc( $game_result ) )
 				{	
 					if ( $status[ $game_row['game_status'] ] == 'Finished' )
 						continue;
@@ -141,7 +141,7 @@
 							unset( $good_colors[ $good_colors[ $p_color ] ] );
 							unset( $good_colors[ $p_color ] );
 							
-							$player_row = mysql_fetch_assoc( $player_result );
+							$player_row = mysqli_fetch_assoc( $player_result );
 						}
 						
 						echo 'Players: ' . implode( ', ', $players );
@@ -227,7 +227,7 @@
 			
 			// get leader board
 			$leader_sql = 'SELECT played.player_id, people.player_name, played.total_games, won.wins, (won.wins / played.total_games) AS record FROM ((SELECT p.player_id, tt.total AS total_games FROM players p LEFT JOIN (SELECT t.player_id, COUNT(t.player_id) AS total FROM (SELECT gp.player_id FROM (game_players gp INNER JOIN games g ON gp.game_id=g.game_id) INNER JOIN game_statuses gs ON g.game_status=gs.game_status_id WHERE gs.game_status_name=\'Finished\') t GROUP BY t.player_id) tt ON p.player_id=tt.player_id) played LEFT JOIN (SELECT p.player_id, COUNT(p.player_id) AS wins FROM players p INNER JOIN (SELECT gp.player_id FROM (games g INNER JOIN game_statuses gs ON g.game_status=gs.game_status_id) INNER JOIN game_players gp ON g.game_id=gp.game_id WHERE gs.game_status_name=\'Finished\' AND CHAR_LENGTH(gp.cup)) w WHERE p.player_id=w.player_id GROUP BY w.player_id) won ON played.player_id=won.player_id) INNER JOIN players people ON played.player_id=people.player_id WHERE people.track_stats=\'Y\' AND played.total_games>0 ORDER BY won.wins DESC, record DESC, played.total_games DESC, people.player_id ASC';
-			$leader_result = @mysql_query( $leader_sql, $db );
+			$leader_result = @mysqli_query( $db, $leader_sql );
 			
 			echo '<div id="leader">';
 			echo '<div class="section">';
@@ -245,7 +245,7 @@
 			
 				echo '<tbody>';
 			
-					while ( $leader_row = mysql_fetch_assoc( $leader_result ) )
+					while ( $leader_row = mysqli_fetch_assoc( $leader_result ) )
 					{
 						echo '<tr>';
 							echo '<td><a href="player.php?player_id=' . htmlentities( $leader_row['player_id'] ) . '">' . htmlentities( $leader_row['player_name'] ) . '</a></td>';
@@ -264,7 +264,7 @@
 			echo '</div>';
 			
 			$leader_sql = 'SELECT p.player_name, p.player_id AS p_id, c.* FROM players p LEFT JOIN (SELECT a.player_id, a.total, b.success, (b.success/a.total) AS rate FROM (SELECT al.player_id, COUNT(*) AS total FROM action_logs al INNER JOIN actions a ON al.action_id=a.action_id WHERE a.action_name=\'challenge\' GROUP BY al.player_id) a LEFT JOIN (SELECT al.player_id, COUNT(*) AS success FROM action_logs al INNER JOIN actions a ON al.action_id=a.action_id WHERE a.action_name=\'challenge\' AND al.result=\'1\' GROUP BY al.player_id) b ON a.player_id=b.player_id) c ON p.player_id=c.player_id WHERE p.track_stats=\'Y\' AND total IS NOT NULL ORDER BY c.rate DESC, c.total DESC, c.player_id ASC';
-			$leader_result = @mysql_query( $leader_sql, $db );
+			$leader_result = @mysqli_query( $db, $leader_sql );
 			
 			echo '<div id="challenge">';
 			echo '<div class="section">';
@@ -282,7 +282,7 @@
 			
 				echo '<tbody>';
 			
-					while ( $leader_row = mysql_fetch_assoc( $leader_result ) )
+					while ( $leader_row = mysqli_fetch_assoc( $leader_result ) )
 					{
 						echo '<tr>';
 							echo '<td><a href="player.php?player_id=' . htmlentities( $leader_row['p_id'] ) . '">' . htmlentities( $leader_row['player_name'] ) . '</a></td>';
@@ -302,7 +302,7 @@
 			
 			
 			$leader_sql = 'SELECT *, (success/total) AS rate FROM (SELECT player_id AS p_id, player_name, (SELECT COUNT(*) AS total FROM action_logs WHERE action_id=2 AND value=p_id) AS total, (SELECT COUNT(*) FROM action_logs WHERE action_id=2 AND result=0 AND value=p_id) AS success FROM players WHERE track_stats=\'Y\') stuff WHERE total IS NOT NULL ORDER BY rate DESC, total DESC';
-			$leader_result = @mysql_query( $leader_sql, $db );
+			$leader_result = @mysqli_query( $db, $leader_sql );
 			
 			echo '<div id="survival">';
 			echo '<div class="section">';
@@ -320,7 +320,7 @@
 			
 				echo '<tbody>';
 			
-					while ( $leader_row = mysql_fetch_assoc( $leader_result ) )
+					while ( $leader_row = mysqli_fetch_assoc( $leader_result ) )
 					{
 						echo '<tr>';
 							echo '<td><a href="player.php?player_id=' . htmlentities( $leader_row['p_id'] ) . '">' . htmlentities( $leader_row['player_name'] ) . '</a></td>';
@@ -339,7 +339,7 @@
 			echo '</div>';
 			
 			$leader_sql = 'SELECT p.player_name, p.player_id AS p_id, c.*, (SELECT COUNT(*) AS my_games FROM game_players ugp, games ug WHERE ugp.player_id=p.player_id AND ugp.game_id=ug.game_id) AS my_games FROM players p LEFT JOIN (SELECT a.player_id, a.total, b.success, (b.success/a.total) AS rate FROM (SELECT al.player_id, COUNT(*) AS total FROM action_logs al INNER JOIN actions a ON al.action_id=a.action_id WHERE a.action_name=\'exact\' GROUP BY al.player_id) a LEFT JOIN (SELECT al.player_id, COUNT(*) AS success FROM action_logs al INNER JOIN actions a ON al.action_id=a.action_id WHERE a.action_name=\'exact\' AND al.result=\'1\' GROUP BY al.player_id) b ON a.player_id=b.player_id) c ON p.player_id=c.player_id WHERE p.track_stats=\'Y\' AND c.total IS NOT NULL ORDER BY c.rate DESC, c.total DESC, c.player_id ASC';
-			$leader_result = @mysql_query( $leader_sql, $db );
+			$leader_result = @mysqli_query( $db, $leader_sql );
 			
 			echo '<div id="exact">';
 			echo '<div class="section">';
@@ -358,7 +358,7 @@
 			
 				echo '<tbody>';
 			
-					while ( $leader_row = mysql_fetch_assoc( $leader_result ) )
+					while ( $leader_row = mysqli_fetch_assoc( $leader_result ) )
 					{
 						echo '<tr>';
 							echo '<td><a href="player.php?player_id=' . htmlentities( $leader_row['p_id'] ) . '">' . htmlentities( $leader_row['player_name'] ) . '</a></td>';
@@ -384,14 +384,14 @@
 		{
 			{
 				$game_sql = 'SELECT game_id, game_name FROM games g INNER JOIN game_statuses gs ON g.game_status=gs.game_status_id WHERE game_status_name=' . quote_smart( 'In Progress', $db ) . ' AND game_id IN (SELECT game_id FROM game_players WHERE player_id=' . quote_smart( $user_info['id'], $db ) . ') ORDER BY game_id ASC';
-				$game_result = @mysql_query( $game_sql, $db );
+				$game_result = @mysqli_query( $db, $game_sql );
 				
 				$first = true;
 				
 				echo '<h2>your games</h2>';
 				echo '<ul>';
 				
-					while ( $game_row = mysql_fetch_assoc( $game_result ) )
+					while ( $game_row = mysqli_fetch_assoc( $game_result ) )
 					{
 						$first = false;
 						
@@ -410,14 +410,14 @@
 			
 			{
 				$game_sql = 'SELECT game_id, game_name FROM games g INNER JOIN game_statuses gs ON g.game_status=gs.game_status_id WHERE game_status_name=' . quote_smart( 'In Progress', $db ) . ' AND game_id NOT IN (SELECT game_id FROM game_players WHERE player_id=' . quote_smart( $user_info['id'], $db ) . ') ORDER BY game_id ASC';
-				$game_result = @mysql_query( $game_sql, $db );
+				$game_result = @mysqli_query( $db, $game_sql );
 				
 				$first = true;
 				
 				echo '<h2>other games</h2>';
 				echo '<ul>';
 				
-					while ( $game_row = mysql_fetch_assoc( $game_result ) )
+					while ( $game_row = mysqli_fetch_assoc( $game_result ) )
 					{
 						$first = false;
 						
@@ -436,15 +436,15 @@
 			
 			{
 				$game_sql = 'SELECT game_id, game_name, (SELECT COUNT(*) FROM game_players ps WHERE ps.game_id=g.game_id) AS num_players FROM games g INNER JOIN game_statuses gs ON g.game_status=gs.game_status_id WHERE game_status_name=' . quote_smart( 'Awaiting Players', $db ) . ' AND game_admin=' . quote_smart( $user_info['id'], $db ) . ' ORDER BY game_id ASC';
-				$game_result = @mysql_query( $game_sql, $db );
+				$game_result = @mysqli_query( $db, $game_sql );
 				
-				if ( mysql_num_rows( $game_result ) )
+				if ( mysqli_num_rows( $game_result ) )
 				{
 				
 					echo '<h2>yours to start</h2>';
 					echo '<ul>';
 					
-					while ( $game_row = mysql_fetch_assoc( $game_result ) )
+					while ( $game_row = mysqli_fetch_assoc( $game_result ) )
 					{					
 						echo '<li>';
 						echo '<a href="action_start_game.php?game_id=' . htmlentities( $game_row['game_id'] ) . '" class="showArrow">' . htmlentities( shorten( $game_row['game_name'], 30 ) ) . ' (' . intval( $game_row['num_players'] ) . ')</a>';
@@ -457,9 +457,9 @@
 			
 			{
 				$game_sql = 'SELECT game_id, game_name, (CHAR_LENGTH(g.game_pw) > 0) AS game_protected FROM games g INNER JOIN game_statuses gs ON g.game_status=gs.game_status_id WHERE game_status_name=' . quote_smart( 'Awaiting Players', $db ) . ' AND game_id NOT IN (SELECT game_id FROM game_players WHERE player_id=' . quote_smart( $user_info['id'], $db ) . ') ORDER BY game_id ASC';
-				$game_result = @mysql_query( $game_sql, $db );
+				$game_result = @mysqli_query( $db, $game_sql );
 				
-				if ( mysql_num_rows( $game_result ) )
+				if ( mysqli_num_rows( $game_result ) )
 				{
 					
 					$colors = get_codes('color');					
@@ -469,14 +469,14 @@
 					echo '<h2>to join</h2>';
 					echo '<ul>';
 					
-					while ( $game_row = mysql_fetch_assoc( $game_result ) )
+					while ( $game_row = mysqli_fetch_assoc( $game_result ) )
 					{					
 						$remaining_colors = $colors;
 						{							
 							$color_sql = ( 'SELECT dice_color FROM game_players WHERE game_id=' . quote_smart( $game_row['game_id'], $db ) );
-							$color_result = @mysql_query( $color_sql, $db );
+							$color_result = @mysqli_query( $db, $color_sql );
 							
-							while ( $color_row = mysql_fetch_assoc( $color_result ) )
+							while ( $color_row = mysqli_fetch_assoc( $color_result ) )
 							{						
 								unset( $remaining_colors[ $colors[ intval( $color_row['dice_color'] ) ] ] );
 								unset( $remaining_colors[ intval( $color_row['dice_color'] ) ] );
@@ -546,9 +546,9 @@
 				$temp[] = ( '[your-games]' );
 				
 				$game_sql = 'SELECT game_id, game_name FROM games g INNER JOIN game_statuses gs ON g.game_status=gs.game_status_id WHERE game_status_name=' . quote_smart( 'In Progress', $db ) . ' AND game_id IN (SELECT game_id FROM game_players WHERE player_id=' . quote_smart( $user_info['id'], $db ) . ') ORDER BY game_id ASC';
-				$game_result = @mysql_query( $game_sql, $db );
+				$game_result = @mysqli_query( $db, $game_sql );
 				
-				while ( $game_row = mysql_fetch_assoc( $game_result ) )
+				while ( $game_row = mysqli_fetch_assoc( $game_result ) )
 				{					
 					$temp[] = ( $game_row['game_id'] . '="' . $game_row['game_name'] . '"' );
 				}
@@ -563,13 +563,13 @@
 				$status = get_codes('status');
 				
 				$game_sql = ( 'SELECT game_id, (CHAR_LENGTH(g.game_pw) > 0) AS game_protected FROM games g, game_statuses gs WHERE g.game_status=gs.game_status_id AND gs.game_status_name=' . quote_smart( 'Awaiting Players', $db ) . ' AND game_id NOT IN (SELECT game_id FROM game_players WHERE player_id=' . $user_info['id'] . ') ORDER BY game_id ASC' );
-				$game_result = @mysql_query( $game_sql, $db );
-				while ( $game_row = mysql_fetch_assoc( $game_result ) )
+				$game_result = @mysqli_query( $db, $game_sql );
+				while ( $game_row = mysqli_fetch_assoc( $game_result ) )
 				{
 					$color_sql = ( 'SELECT color_id FROM colors WHERE color_id NOT IN (SELECT dice_color FROM game_players WHERE game_id=' . $game_row['game_id'] . ') ORDER BY color_id ASC' );
-					$color_result = @mysql_query( $color_sql, $db );
+					$color_result = @mysqli_query( $db, $color_sql );
 					$a_colors = array();
-					while ( $color_row = mysql_fetch_assoc( $color_result ) )
+					while ( $color_row = mysqli_fetch_assoc( $color_result ) )
 					{
 						$a_colors[] = intval( $color_row['color_id'] );
 					}
@@ -591,8 +591,8 @@
 				$status = get_codes('status');
 				
 				$game_sql = ( 'SELECT g.game_id, (SELECT COUNT(*) FROM game_players gp WHERE gp.game_id=g.game_id) AS game_size FROM games g, game_statuses gs WHERE gs.game_status_id=g.game_status AND gs.game_status_name=' . quote_smart( 'Awaiting Players', $db ) . ' AND g.game_admin=' . $user_info['id'] . ' ORDER BY g.game_id ASC' );
-				$game_result = @mysql_query( $game_sql, $db );
-				while ( $game_row = mysql_fetch_assoc( $game_result ) )
+				$game_result = @mysqli_query( $db, $game_sql );
+				while ( $game_row = mysqli_fetch_assoc( $game_result ) )
 				{
 					$temp[] = ( $game_row['game_id'] . '=' . '"' . intval( $game_row['game_size'] ) . '"' );
 				}

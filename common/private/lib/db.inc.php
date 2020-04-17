@@ -10,10 +10,10 @@
 	@include( 'db-config.inc.php' );
 
 	// attempt connection
-	$db = @mysql_connect( $db_info['DB_SERVER'], $db_info['DB_USER'], $db_info['DB_PASS'] );
+	$db = @mysqli_connect( $db_info['DB_SERVER'], $db_info['DB_USER'], $db_info['DB_PASS'], $db_info['DB_NAME'] );
 
 	// check result
-	if ( !$db || !@mysql_select_db( $db_info['DB_NAME'], $db ) )
+	if ( !$db )
 		exit( 'error connecting to the database' );
 	
 	// remove db connection information
@@ -32,7 +32,7 @@
 			
 		// quote if not integer
 		if ( $override || !is_numeric( $value ) ) 
-			$value = "'" . mysql_real_escape_string( $value, $db ) . "'";
+			$value = "'" . mysqli_real_escape_string( $db, $value ) . "'";
   
   		return $value;
 	}

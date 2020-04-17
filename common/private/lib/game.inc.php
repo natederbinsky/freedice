@@ -19,9 +19,9 @@
 		$return_val = array();
 		
 		$sql = 'SELECT p.player_id, p.player_name, p.player_email, gp.dice_color, gp.cup, gp.shown, gp.exact_used, p.auto_refresh FROM game_players gp INNER JOIN players p ON gp.player_id=p.player_id WHERE gp.game_id=' . $game_id . ' ORDER BY gp.play_order ASC';
-		$result = @mysql_query( $sql, $db );
+		$result = @mysqli_query( $db, $sql );
 		
-		while ( $row = mysql_fetch_assoc( $result ) )
+		while ( $row = mysqli_fetch_assoc( $result ) )
 		{
 			$cup = array();
 			$shown = array();
@@ -57,9 +57,9 @@
 		$return_val = NULL;
 		
 		$sql = 'SELECT game_id, game_name, game_status, dice_start, game_emails, (SELECT max(round_id) FROM rounds WHERE game_id=' . $game_id . ') AS game_round, (SELECT special_rules FROM rounds WHERE round_id=game_round) AS special_rules FROM games WHERE game_id=' . $game_id;
-		$result = @mysql_query( $sql, $db );
+		$result = @mysqli_query( $db, $sql );
 		
-		if ( $row = mysql_fetch_assoc( $result ) )
+		if ( $row = mysqli_fetch_assoc( $result ) )
 		{			
 			$return_val['game_id'] = intval( $row['game_id'] );
 			$return_val['game_status'] = intval( $row['game_status'] );
@@ -80,9 +80,9 @@
 		
 		$sql = 'SELECT player_id, action_id, value, result FROM action_logs WHERE round_id=' . $round_id . ' ORDER BY log_id DESC';
 		
-		$result = @mysql_query( $sql, $db );
+		$result = @mysqli_query( $db, $sql );
 		
-		while ( $row = mysql_fetch_assoc( $result ) )
+		while ( $row = mysqli_fetch_assoc( $result ) )
 		{			
 			$return_val[] = array(
 				'player_id' => intval( $row['player_id'] ),
@@ -102,9 +102,9 @@
 		
 		$sql = 'SELECT * FROM action_logs a WHERE a.round_id IN (SELECT r.round_id FROM rounds r WHERE r.game_id=' . quote_smart( $game_id, $db ) . ') AND CHAR_LENGTH(a.result) ORDER BY a.round_id DESC';
 		
-		$result = @mysql_query( $sql, $db );
+		$result = @mysqli_query( $db, $sql );
 		
-		while ( $row = mysql_fetch_assoc( $result ) )
+		while ( $row = mysqli_fetch_assoc( $result ) )
 		{			
 			$return_val[] = array(
 				'player_id' => intval( $row['player_id'] ),
@@ -124,9 +124,9 @@
 		$return_val = array();
 		
 		$sql = 'SELECT p.player_name, m.msg FROM msgs m INNER JOIN players p ON m.player_id=p.player_id WHERE game_id=' . $game_id . ' ORDER BY msg_id DESC LIMIT 5';		
-		$result = @mysql_query( $sql, $db );
+		$result = @mysqli_query( $db, $sql );
 		
-		while ( $row = mysql_fetch_assoc( $result ) )
+		while ( $row = mysqli_fetch_assoc( $result ) )
 		{			
 			$return_val[] = array(
 				'player_name' => ( $row['player_name'] ),
@@ -243,10 +243,10 @@
 			global $db;
 			
 			$sql = 'SELECT MAX(round_id) AS prev_round FROM rounds WHERE game_id=' . $game['game_id'] . ' AND round_id<' . $game['game_round'];
-			$result = @mysql_query( $sql, $db );
+			$result = @mysqli_query( $db, $sql );
 		
-			if ( $row = mysql_fetch_assoc( $result ) )
-			{			
+			if ( $row = mysqli_fetch_assoc( $result ) )
+			{
 				if ( !is_null( $row['prev_round'] ) )
 				{
 					$last_logs = get_round_logs( intval( $row['prev_round'] ) );

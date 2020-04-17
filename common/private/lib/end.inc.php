@@ -31,5 +31,5 @@
 	// output the page
 	echo $template;
 	
-	mysql_close( $db );
+	mysqli_close( $db );
 ?>

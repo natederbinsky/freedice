@@ -22,10 +22,10 @@
 		
 		// check valid game
 		$sql = 'SELECT game_pw, game_status FROM games WHERE game_id=' . $game_id;
-		$result = @mysql_query( $sql, $db );
-		if ( $result && ( mysql_num_rows( $result ) == 1 ) )
+		$result = @mysqli_query( $db, $sql );
+		if ( $result && ( mysqli_num_rows( $result ) == 1 ) )
 		{
-			$row = mysql_fetch_assoc( $result );
+			$row = mysqli_fetch_assoc( $result );
 			$good = true;
 			
 			// check pw of game
@@ -51,8 +51,8 @@
 					// check available game color
 					
 					$sql = 'SELECT player_id, dice_color FROM game_players WHERE game_id=' . $game_id;
-					$result = @mysql_query( $sql, $db );
-					while ( $row = mysql_fetch_assoc( $result ) )
+					$result = @mysqli_query( $db, $sql );
+					while ( $row = mysqli_fetch_assoc( $result ) )
 					{
 						if ( ( intval( $row['player_id'] ) == $user_info['id'] ) || ( intval( $row['dice_color'] ) == $color ) )
 						{
@@ -75,7 +75,7 @@
 		else
 		{
 			$player_sql = 'INSERT INTO game_players (game_id, player_id, dice_color, cup, shown, play_order, exact_used) VALUES (' . $game_id . ', ' . $user_info['id'] . ', ' . $color . ', ' . quote_smart( '', $db ) . ', ' . quote_smart( '', $db ) . ', ' . ( -roll_dice() ) . ', ' . quote_smart( 'N', $db ) . ')';
-			$player_result = @mysql_query( $player_sql, $db );
+			$player_result = @mysqli_query( $db, $player_sql );
 			
 			$join_result = 'Joined game.';
 		}

@@ -29,17 +29,17 @@
 			$status = get_codes('status');
 			
 			$game_sql = 'INSERT INTO games (game_name, game_pw, game_status, dice_start, game_admin, game_emails) VALUES (' . quote_smart( $name, $db ) . ', ' . quote_smart( ( ( empty( $pw ) )?(''):( md5( $pw ) ) ), $db ) . ',' . $status['Awaiting Players'] . ',' . $dice . ',' . $user_info['id'] . ',' . quote_smart( ( ( $emails )?('Y'):('N') ), $db ) . ')';
-			$game_result = @mysql_query( $game_sql, $db );
-			$my_id = mysql_insert_id( $db );
+			$game_result = @mysqli_query( $db, $game_sql );
+			$my_id = mysqli_insert_id( $db );
 			
 			$player_sql = 'INSERT INTO game_players (game_id, player_id, dice_color, cup, shown, play_order, exact_used) VALUES (' . $my_id . ', ' . $user_info['id'] . ', ' . $color . ', ' . quote_smart( '', $db ) . ', ' . quote_smart( '', $db ) . ', ' . ( -roll_dice() ) . ', ' . quote_smart( 'N', $db ) . ')';
-			$player_result = @mysql_query( $player_sql, $db );
+			$player_result = @mysqli_query( $db, $player_sql );
 			
 			if ( empty( $pw ) )
 			{
 				$email_sql = 'SELECT player_email FROM players';
-				$email_result = @mysql_query( $email_sql, $db );
-				while ( $row = mysql_fetch_assoc( $email_result ) )
+				$email_result = @mysqli_query( $db, $email_sql );
+				while ( $row = mysqli_fetch_assoc( $email_result ) )
 				{
 					mail( $row['player_email'], ( 'Dice Game (' . $name . '): Just Created!' ), 'Come join in!' );
 				}

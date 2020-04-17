@@ -88,11 +88,11 @@
 		if ( EXEC_WEB && isset( $_SESSION['user_id'] ) )
 		{
 			$sql = 'SELECT player_name, player_email FROM players WHERE player_id=' . intval( $_SESSION['user_id'] );
-			$query_result = mysql_query( $sql, $db );
+			$query_result = mysqli_query( $db, $sql );
 		
-			if ( $query_result && ( mysql_num_rows( $query_result ) == 1 ) )
+			if ( $query_result && ( mysqli_num_rows( $query_result ) == 1 ) )
 			{
-				$row = mysql_fetch_assoc( $query_result );
+				$row = mysqli_fetch_assoc( $query_result );
 				
 				$user_info['id'] = intval( $_SESSION['user_id'] );
 				$user_info['name'] = $row['player_name'];
@@ -107,11 +107,11 @@
 			if ( !empty( $email ) && !empty( $pw ) )
 			{
 				$sql = 'SELECT player_id, player_name FROM players WHERE player_email=' . quote_smart( $email, $db ) . ' AND player_pw=' . quote_smart( md5( $pw ), $db );
-				$query_result = mysql_query( $sql, $db );
+				$query_result = mysqli_query( $db, $sql );
 		
-				if ( $query_result && ( mysql_num_rows( $query_result ) == 1 ) )
+				if ( $query_result && ( mysqli_num_rows( $query_result ) == 1 ) )
 				{
-					$row = mysql_fetch_assoc( $query_result );
+					$row = mysqli_fetch_assoc( $query_result );
 					
 					$user_info['id'] = intval( $row['player_id'] );
 					$user_info['email'] = $email;

@@ -18,10 +18,10 @@
 		$good_result = false;
 		
 		$sql = 'SELECT game_status, game_name, game_admin, game_emails, dice_start FROM games WHERE game_status=' . $status['Awaiting Players'] . ' AND game_id=' . $game_id;
-		$result = @mysql_query( $sql, $db );
-		if ( $result && ( mysql_num_rows( $result ) == 1 ) )
+		$result = @mysqli_query( $db, $sql );
+		if ( $result && ( mysqli_num_rows( $result ) == 1 ) )
 		{
-			$row = mysql_fetch_assoc( $result );
+			$row = mysqli_fetch_assoc( $result );
 			
 			$game_name = $row['game_name'];
 			
@@ -32,15 +32,15 @@
 			else
 			{
 				$players_sql = 'SELECT gp.player_id, p.player_email FROM game_players gp INNER JOIN players p ON gp.player_id=p.player_id WHERE gp.game_id=' . $game_id;
-				$players_result = @mysql_query( $players_sql, $db );
-				if ( mysql_num_rows( $players_result ) < 2 )
+				$players_result = @mysqli_query( $db, $players_sql );
+				if ( mysqli_num_rows( $players_result ) < 2 )
 				{
 					$op_result = 'You need at least 2 players to start a game.';
 				}
 				else
 				{
 					$orders = array();
-					while ( $p_row = mysql_fetch_assoc( $players_result ) )
+					while ( $p_row = mysqli_fetch_assoc( $players_result ) )
 					{
 						$roll = -1;
 						
@@ -63,14 +63,14 @@
 						$cup = implode( '', roll_dice( intval( $row['dice_start'] ) ) );
 						
 						$cup_sql = 'UPDATE game_players SET cup=' . quote_smart( $cup, $db ) . ', play_order=' . ( $counter++ ) . ' WHERE game_id=' . $game_id . ' AND player_id=' . $order;
-						$cup_result = @mysql_query( $cup_sql, $db );
+						$cup_result = @mysqli_query( $db, $cup_sql );
 					}
 					
 					$start_sql = 'UPDATE games SET game_status=' . $status['In Progress'] . ' WHERE game_id=' . $game_id;
-					$start_result = @mysql_query( $start_sql, $db );
+					$start_result = @mysqli_query( $db, $start_sql );
 					
 					$start_sql = 'INSERT INTO rounds (game_id) VALUES (' . $game_id . ')';
-					$start_result = @mysql_query( $start_sql, $db );
+					$start_result = @mysqli_query( $db, $start_sql );
 					
 					$good_result = true;
 					

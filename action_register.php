@@ -18,8 +18,8 @@
 	else
 	{
 		$check_sql = 'SELECT player_id FROM players WHERE player_email=' . quote_smart( $email, $db );
-		$result = @mysql_query( $check_sql, $db );
-		if ( mysql_num_rows( $result ) )
+		$result = @mysqli_query( $db, $check_sql );
+		if ( mysqli_num_rows( $result ) )
 		{
 			echo '<p class="ui-state-error">Invalid e-mail.</p>';
 		}
@@ -28,7 +28,7 @@
 			if ( ENABLE_REGISTRATION )
 			{
 				$sql = 'INSERT INTO players (player_name, player_pw, player_email, auto_refresh) VALUES (' . quote_smart( $name, $db ) . ',' . quote_smart( md5( $pw ), $db ) . ',' . quote_smart( $email, $db ) . ',' . 10 . ')';
-				$result = @mysql_query( $sql, $db );
+				$result = @mysqli_query( $db, $sql );
 				
 				echo '<p class="ui-state-highlight">Account added.</p>';
 			}

@@ -123,9 +123,9 @@
 						}
 						
 						if ( $good )
-						{							
+						{					
 							$sql = 'INSERT INTO action_logs (round_id, player_id, action_id, value) VALUES (' . $game['game_round'] . ',' . $elaborations['me']['player_id'] . ',' . $actions['bid'] . ',' . quote_smart( ( $num . ',' . $face ), $db ) . ')';
-							$result = @mysql_query( $sql, $db );
+							$result = @mysqli_query( $db, $sql );
 							
 							$notification = ( $elaborations['me']['player_name'] . ' bid!' );
 						}
@@ -184,10 +184,10 @@
 							$new_shown = implode( '', $new_shown );
 							
 							$sql = 'UPDATE game_players SET cup=' . quote_smart( $new_cup, $db ) . ', shown=' . quote_smart( $new_shown, $db ) . ' WHERE game_id=' . $game['game_id'] . ' AND player_id=' . $elaborations['me']['player_id'];
-							$result = @mysql_query( $sql, $db );
+							$result = @mysqli_query( $db, $sql );
 							
 							$sql = 'INSERT INTO action_logs (round_id, player_id, action_id) VALUES (' . $game['game_round'] . ',' . $elaborations['me']['player_id'] . ',' . $actions['push'] . ')';
-							$result = @mysql_query( $sql, $db );
+							$result = @mysqli_query( $db, $sql );
 							
 							$notification = ( $elaborations['me']['player_name'] . ' pushed!' );
 						}
@@ -223,7 +223,7 @@
 					else if ( $actions[ $action ] == 'pass' )
 					{
 						$sql = 'INSERT INTO action_logs (round_id, player_id, action_id) VALUES (' . $game['game_round'] . ',' . $elaborations['me']['player_id'] . ',' . $actions['pass'] . ')';
-						$result = @mysql_query( $sql, $db );
+						$result = @mysqli_query( $db, $sql );
 						
 						$notification = ( $elaborations['me']['player_name'] . ' passed!' );
 					}
@@ -258,13 +258,13 @@
 						}
 						
 						$sql = 'UPDATE game_players SET exact_used=' . quote_smart( 'Y', $db ) . ' WHERE player_id=' . $elaborations['me']['player_id'] . ' AND game_id=' . $game['game_id'];
-						$result = @mysql_query( $sql, $db );
+						$result = @mysqli_query( $db, $sql );
 						
 						$sql = 'UPDATE game_players SET shown=CONCAT(cup,shown), cup=' . quote_smart( '', $db ) . ' WHERE game_id=' . $game['game_id'];
-						$result = @mysql_query( $sql, $db );
+						$result = @mysqli_query( $db, $sql );
 						
 						$sql = 'INSERT INTO action_logs (round_id, player_id, action_id, result, extra) VALUES (' . $game['game_round'] . ',' . $elaborations['me']['player_id'] . ',' . $actions['exact'] . ',' . ( ( $target_num == 0 )?(1):(0) ) . ',' . quote_smart( $extra, $db ) . ')';
-						$result = @mysql_query( $sql, $db );
+						$result = @mysqli_query( $db, $sql );
 						
 						$notification = ( $elaborations['me']['player_name'] . ' exacted!' );
 					}
@@ -352,10 +352,10 @@
 										$bad_face = true;
 								
 								$sql = 'UPDATE game_players SET shown=CONCAT(cup,shown), cup=' . quote_smart( '', $db ) . ' WHERE game_id=' . $game['game_id'];
-								$result = @mysql_query( $sql, $db );
+								$result = @mysqli_query( $db, $sql );
 								
 								$sql = 'INSERT INTO action_logs (round_id, player_id, action_id, value, result, extra) VALUES (' . $game['game_round'] . ',' . $elaborations['me']['player_id'] . ',' . $actions['challenge'] . ',' . $target . ',' . ( ( $bad_face )?(1):(0) ) . ',' . quote_smart( $extra, $db ) . ')';
-								$result = @mysql_query( $sql, $db );
+								$result = @mysqli_query( $db, $sql );
 								
 								$notification = ( $elaborations['me']['player_name'] . ' challenged the pass!' );
 							}
@@ -390,10 +390,10 @@
 								}
 								
 								$sql = 'UPDATE game_players SET shown=CONCAT(cup,shown), cup=' . quote_smart( '', $db ) . ' WHERE game_id=' . $game['game_id'];
-								$result = @mysql_query( $sql, $db );
+								$result = @mysqli_query( $db, $sql );
 								
 								$sql = 'INSERT INTO action_logs (round_id, player_id, action_id, value, result, extra) VALUES (' . $game['game_round'] . ',' . $elaborations['me']['player_id'] . ',' . $actions['challenge'] . ',' . $target . ',' . ( ( $target_num > 0 )?(1):(0) ) . ',' . quote_smart( $extra, $db ) . ')';
-								$result = @mysql_query( $sql, $db );
+								$result = @mysqli_query( $db, $sql );
 								
 								$notification = ( $elaborations['me']['player_name'] . ' challenged the bid!' );
 							}
@@ -404,7 +404,7 @@
 						$last_non_accept = 0;						
 						
 						$sql = 'INSERT INTO action_logs (round_id, player_id, action_id) VALUES (' . $game['game_round'] . ',' . $elaborations['me']['player_id'] . ',' . $actions['accept'] . ')';
-						$result = @mysql_query( $sql, $db );
+						$result = @mysqli_query( $db, $sql );
 						
 						{
 							$new_counts = array();
@@ -442,7 +442,7 @@
 							foreach ( $new_counts as $key => $val )
 							{
 								$sql = 'UPDATE game_players SET cup=' . quote_smart( implode( '', roll_dice( $val, false ) ), $db ) . ', shown=' . quote_smart( '', $db ) . ' WHERE game_id=' . $game['game_id'] . ' AND player_id=' . $key;
-								$result = @mysql_query( $sql, $db );
+								$result = @mysqli_query( $db, $sql );
 							}
 							
 							if ( $still_going > 1 )
@@ -450,8 +450,8 @@
 								if ( ( $down_to_one != -1 ) && ( $still_going > 2 ) )
 								{
 									$sql = 'SELECT COUNT(*) AS my_ct FROM rounds WHERE game_id=' . $game['game_id'] . ' AND special_rules=' . quote_smart( $down_to_one, $db );
-									$result = @mysql_query( $sql, $db );
-									$row = mysql_fetch_assoc( $result );
+									$result = @mysqli_query( $db, $sql );
+									$row = mysqli_fetch_assoc( $result );
 									
 									if ( intval( $row['my_ct'] ) != 0 )
 									{
@@ -460,7 +460,7 @@
 								}
 								
 								$sql = 'INSERT INTO rounds (game_id,special_rules) VALUES (' . $game['game_id'] . ',' . quote_smart( ( ( ( $down_to_one != -1 ) && ( $still_going > 2 ) )?( $down_to_one ):('N') ), $db ) . ')';
-								$result = @mysql_query( $sql, $db );
+								$result = @mysqli_query( $db, $sql );
 								
 								$notification = ( $elaborations['me']['player_name'] . ' stopped holding up science.' );
 								$mail_me = false;
@@ -468,7 +468,7 @@
 							else
 							{
 								$sql = 'UPDATE games SET game_status=' . $status['Finished'] . ' WHERE game_id=' . $game['game_id'];
-								$result = @mysql_query( $sql, $db );
+								$result = @mysqli_query( $db, $sql );
 								
 								$notification = ( $elaborations['me']['player_name'] . ' ended the game.' );
 								$game_over = true;

@@ -42,7 +42,7 @@
 				if ( strlen( $msg ) )
 				{
 					$sql = 'INSERT INTO msgs (game_id, player_id, msg) VALUES (' . $game['game_id'] . ',' . $user_info['id'] . ',' . quote_smart( $msg, $db ) . ')';
-					$result = @mysql_query( $sql, $db );
+					$result = @mysqli_query( $db, $sql );
 					
 					if ( $game['game_emails'] )
 					{ 

@@ -55,9 +55,9 @@ CREATE TABLE IF NOT EXISTS `action_logs` (
   `round_id` int(11) NOT NULL,
   `player_id` int(11) NOT NULL,
   `action_id` int(11) NOT NULL,
-  `value` varchar(10) NOT NULL,
-  `result` varchar(10) NOT NULL,
-  `extra` varchar(250) NOT NULL,
+  `value` varchar(10) NOT NULL DEFAULT '',
+  `result` varchar(10) NOT NULL DEFAULT '',
+  `extra` varchar(250) NOT NULL DEFAULT ''
   PRIMARY KEY (`log_id`),
   KEY `log_id` (`log_id`,`round_id`),
   KEY `round_id` (`round_id`,`result`)
