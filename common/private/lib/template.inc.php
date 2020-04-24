@@ -8,11 +8,8 @@
 
 		<link type="text/css" href="common/public/jquery-ui-1.8.5.custom.css" rel="Stylesheet" />
 
-		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
-		<script type="text/javascript">
-			google.load( "jquery", "1.4" );
-			google.load( "jqueryui", "1.8" );
-		</script>
+		<script type="text/javascript" src="common/public/jquery-1.4.4.min.js"></script>
+		<script type="text/javascript" src="common/public/jquery-ui-1.8.17.min.js"></script>
 		
 		{head}
 	</head>
